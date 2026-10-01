@@ -1,0 +1,27 @@
+{
+  "name": "hillel-test-repo02",
+  "version": "1.0.0",
+  "description": "repo for cypress homework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yulpay/hillel-test-repo02.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yulpay/hillel-test-repo02/issues"
+  },
+  "homepage": "https://github.com/yulpay/hillel-test-repo02#readme",
+  "devDependencies": {
+    "cypress": "^16.1.1"
+  },
+  "allowScripts": {
+    "cypress@16.1.1": true
+  }
+}

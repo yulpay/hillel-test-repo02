@@ -24,17 +24,27 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+// Basic auth credentials of the environment (see cypress/config/*.config.js)
+const withBasicAuth = (callback) =>
+  cy
+    .env(['httpUser', 'httpPassword'], { log: false })
+    .then(({ httpUser, httpPassword }) =>
+      callback({ username: httpUser, password: httpPassword })
+    );
+
+// Visit a page of the app behind HTTP basic auth
+Cypress.Commands.add('visitApp', (path = '/') => {
+  withBasicAuth((auth) => cy.visit(path, { auth }));
+});
+
+// Authenticated API request (relies on the session cookie set by login)
+Cypress.Commands.add('apiRequest', (method, url, body) => {
+  return withBasicAuth((auth) => cy.request({ method, url, body, auth }));
+});
+
 // Custom UI login command
-
-
-
 Cypress.Commands.add('login', (email, password) => {
-  cy.visit('/', {
-    auth: {
-      username: 'guest',
-      password: 'welcome2qauto',
-    },
-  });
+  cy.visitApp('/');
 
   // If a user is already authenticated, log out first.
   cy.get('body').then(($body) => {
@@ -52,10 +62,8 @@ Cypress.Commands.add('login', (email, password) => {
   });
 
   // Open the Sign in form.
-  cy.contains('button, a', /sign in|login|log in/i)
-    .filter(':visible')
-    .first()
-    .click();
+  // Use the exact selector: a text match would also hit "Guest log in".
+  cy.get('button.header_signin').should('be.visible').click();
 
   // Enter credentials.
   cy.get('#signinEmail')
@@ -93,3 +101,40 @@ Cypress.Commands.overwrite(
     return originalFn(element, text, typeOptions);
   }
 );
+
+// Log in as the user of the current environment, cached between tests
+Cypress.Commands.add('loginAsUser', () => {
+  cy.env(['userEmail', 'userPassword'], { log: false }).then(
+    ({ userEmail, userPassword }) => {
+      cy.session(
+        [Cypress.config('baseUrl'), userEmail],
+        () => {
+          cy.login(userEmail, userPassword);
+          cy.location('pathname').should('eq', '/panel/garage');
+        },
+        {
+          validate() {
+            cy.apiRequest('GET', '/api/users/current')
+              .its('status')
+              .should('eq', 200);
+          },
+        }
+      );
+    }
+  );
+});
+
+// Test data helpers
+Cypress.Commands.add('apiCreateCar', ({ carBrandId, carModelId, mileage }) => {
+  return cy
+    .apiRequest('POST', '/api/cars', { carBrandId, carModelId, mileage })
+    .its('body.data');
+});
+
+Cypress.Commands.add('apiDeleteAllCars', () => {
+  cy.apiRequest('GET', '/api/cars').then(({ body }) => {
+    body.data.forEach(({ id }) => {
+      cy.apiRequest('DELETE', `/api/cars/${id}`);
+    });
+  });
+});

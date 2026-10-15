@@ -4,7 +4,14 @@
   "description": "repo for cypress homework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cy:open": "cypress open",
+    "cy:open:qauto": "cypress open --config-file cypress/config/qauto.config.js",
+    "cy:open:qauto2": "cypress open --config-file cypress/config/qauto2.config.js",
+    "test:qauto": "cypress run --config-file cypress/config/qauto.config.js",
+    "test:qauto2": "cypress run --config-file cypress/config/qauto2.config.js",
+    "report:clean": "rm -rf cypress/results cypress/reports",
+    "report:merge": "mochawesome-merge \"cypress/results/*.json\" -o cypress/reports/report.json",
+    "report:generate": "marge cypress/reports/report.json -f report -o cypress/reports"
   },
   "repository": {
     "type": "git",
@@ -19,7 +26,10 @@
   },
   "homepage": "https://github.com/yulpay/hillel-test-repo02#readme",
   "devDependencies": {
-    "cypress": "^16.1.1"
+    "cypress": "^16.1.1",
+    "mochawesome": "^8.1.1",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2"
   },
   "allowScripts": {
     "cypress@16.1.1": true

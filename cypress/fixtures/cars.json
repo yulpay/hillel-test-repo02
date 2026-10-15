@@ -1,0 +1,16 @@
+{
+  "audiTT": {
+    "brand": "Audi",
+    "model": "TT",
+    "carBrandId": 1,
+    "carModelId": 1,
+    "mileage": 1500
+  },
+  "bmwX5": {
+    "brand": "BMW",
+    "model": "X5",
+    "carBrandId": 2,
+    "carModelId": 8,
+    "mileage": 32000
+  }
+}

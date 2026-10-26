@@ -84,9 +84,24 @@ npm run report:clean       # remove old results before a new run
 
 ## Garage & Expenses coverage
 
-- Add a car to the garage (`garage.cy.js`)
 - Add a fuel expense from the Fuel expenses page (`expenses.cy.js`)
 - Add a fuel expense from the car card in the garage (`expenses.cy.js`)
+
+## Car & expense flow (`cypress/e2e/car-expense-flow/`)
+
+The specs run in order and share data through generated fixtures in
+`cypress/fixtures/generated/` (gitignored), so run the whole folder, not a single spec.
+
+1. `01-garage-add-car.cy.js` - adds a car through the UI, intercepts `POST /api/cars`
+   (status 201) and saves the car id to `createdCar.json`
+2. `02-cars-api.cy.js` - `GET /api/cars` contains that car (id, brand, model, mileage)
+3. `03-expense-api.cy.js` - `cy.createExpense(body)` creates a fuel expense for the car
+   (status 200, fields match) and saves it to `createdExpense.json`
+4. `04-expense-ui.cy.js` - the Fuel expenses page shows that expense (date, mileage, liters, total cost)
+
+Login is done once through the UI and reused in every spec with `cy.session()` (`cacheAcrossSpecs`).
+
+npx cypress run --spec "cypress/e2e/car-expense-flow/**"
 
 Note: when running from the VS Code integrated terminal, Cypress may fail to start
 because of `ELECTRON_RUN_AS_NODE=1`; run `unset ELECTRON_RUN_AS_NODE` first.

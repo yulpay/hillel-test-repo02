@@ -11,6 +11,9 @@ module.exports = defineConfig({
   env: {
     httpUser: 'guest',
     httpPassword: 'welcome2qauto',
+    // Default test user (qauto), so plain `npx cypress run` works
+    userEmail: 'jp.qauto.1791974863@test.com',
+    userPassword: 'Qauto12345',
   },
   e2e: {
     baseUrl: 'https://qauto.forstudy.space',

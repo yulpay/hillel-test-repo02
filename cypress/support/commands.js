@@ -113,6 +113,7 @@ Cypress.Commands.add('loginAsUser', () => {
           cy.location('pathname').should('eq', '/panel/garage');
         },
         {
+          cacheAcrossSpecs: true,
           validate() {
             cy.apiRequest('GET', '/api/users/current')
               .its('status')
@@ -129,6 +130,11 @@ Cypress.Commands.add('apiCreateCar', ({ carBrandId, carModelId, mileage }) => {
   return cy
     .apiRequest('POST', '/api/cars', { carBrandId, carModelId, mileage })
     .its('body.data');
+});
+
+// POST /api/expenses; yields the full response
+Cypress.Commands.add('createExpense', (body) => {
+  return cy.apiRequest('POST', '/api/expenses', body);
 });
 
 Cypress.Commands.add('apiDeleteAllCars', () => {

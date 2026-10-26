@@ -80,9 +80,22 @@ class ExpensesPage {
 
   selectCar(carName) {
     this.carSelectDropdown.click();
-    cy.contains('.car-select-dropdown_item', carName).click();
+    cy.contains('.car-select-dropdown_item', carName).then(($item) => {
+      // The currently selected car is shown as an active, disabled item
+      if ($item.hasClass('-active')) {
+        this.carSelectDropdown.click();
+      } else {
+        cy.wrap($item).click();
+      }
+    });
     this.carSelectDropdown.should('contain', carName);
     return this;
+  }
+
+  // "2026-10-22" -> date as shown in the expenses table
+  formatDate(isoDate) {
+    const [year, month, day] = isoDate.split('-');
+    return `${day}.${month}.${year}`;
   }
 
   getExpenseRow(mileage) {

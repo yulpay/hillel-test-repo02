@@ -1,4 +1,5 @@
-const garagePage = require('../pages/GaragePage');
+const garagePage = require('../../pages/GaragePage');
+const { CREATED_CAR_FILE } = require('../../support/testData');
 
 describe('Garage', () => {
   beforeEach(() => {
@@ -17,6 +18,18 @@ describe('Garage', () => {
     cy.wait('@createCar').then(({ response }) => {
       expect(response.statusCode).to.eq(201);
       expect(response.body.data).to.include({
+        brand: car.brand,
+        model: car.model,
+        mileage: car.mileage,
+      });
+
+      const { id } = response.body.data;
+      expect(id).to.be.a('number');
+      cy.wrap(id).as('carId');
+
+      // Share the created car with the next specs of the flow
+      cy.writeFile(CREATED_CAR_FILE, {
+        id,
         brand: car.brand,
         model: car.model,
         mileage: car.mileage,

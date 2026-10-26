@@ -4,3 +4,4 @@ cypress/reports/
 cypress/screenshots/
 cypress/videos/
 .DS_Store
+cypress/fixtures/generated/
